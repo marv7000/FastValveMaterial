@@ -1,11 +1,10 @@
 # FastValveMaterial
-Bulk convert PBR or custom texture setups to VMT and VMF files.
+Bulk convert PBR materials and textures to VMT and VMF files.
 
 Dependencies:
 - Pillow (PIL)
 - Numpy
 
 Usage:
-1. Drop all texture files into "images/", grouped as subfolders for each material (e.g. "images/testmat/image1.png")
-2. Edit config.md and adjust the settings
-3. Run FastValveMaterial.py
+1. Drop all texture files into a folder
+2. Run FastValveMaterial.py and follow the instructions
