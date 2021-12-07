@@ -1,11 +1,19 @@
 # FastValveMaterial
-Bulk convert PBR or custom texture setups to VMT and VMF files.
+Convert PBR materials to VMT and VMF files that imitate PBR properties in Source engine games like Garry's Mod.
+# Dependencies:
+- pillow (PIL)
+- numpy
+# Setup:
+- If you're using the release version, you don't need to do anything else
+- On the other hand, when cloning the source, make sure to also pull and initialize VTFLibWrapper ("git submodules init" + "git submodules pull")
 
-Dependencies:
-- Pillow (PIL)
-- Numpy
+- You will need the following textures:
+    - Diffuse/Color map
+    - Normal map
+    - Metalness map
+    - Glossiness map (If you have a roughness map, set "Material Type" in config.md to "rough")
+    - Optional: Ambient Occlusion map (If no image is given, the script defaults to a white image as the AO map)
 
-Usage:
-1. Drop all texture files into "images/", grouped as subfolders for each material (e.g. "images/testmat/image1.png")
-2. Edit config.md and adjust the settings
+1. Drop all texture files into "images/", grouped as subfolders for each material (e.g. "images/testmat/")
+2. Adjust config.md
 3. Run FastValveMaterial.py
