@@ -26,6 +26,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. """
 
+from typing import Match
 from PIL import Image, ImageChops, ImageOps
 import os
 import sys
@@ -38,8 +39,8 @@ from pathlib import Path
 import shutil
 
 vtf_lib = VTFLib.VTFLib()
-
-print("FastValveMaterial (v1207)\n")
+version = "1208"
+print("FastValveMaterial (v"+version+")\n")
 
 f = open("config.md", 'r') # Read the config file (Actual line - 1)
 config = f.read().splitlines()
@@ -52,6 +53,8 @@ config_midtone = config[15]
 config_export_images = eval(config[17])
 config_material_setup = config[19]
 config_debug_messages = eval(config[21])
+config_print_config = eval(config[23])
+mat_count = int(0)
 
 def debug(message):
     if config_debug_messages:
@@ -114,8 +117,8 @@ def do_exponent(gIm): # Generate the exponent map
         os.remove(name+"_m.vtf")
         debug("[FVM] Exponent already exists!")
 
-def convert_roughness_to_gloss(mIm): # Inverts a roughness map "mIm" to get a glossiness map
-    return ImageOps.invert(mIm)
+def convert_roughness_to_gloss(im): # Inverts a roughness map "mIm" to get a glossiness map
+    return ImageOps.invert(im.convert('RGB'))
 
 def do_normal(config_midtone, nIm, gIm):
     finalNormal = nIm.convert('RGBA')
@@ -218,6 +221,7 @@ def do_material(mName): # Create a material with the given image names
         f.close()
         shutil.move(mName+'.vmt', "materials/")
     except:
+        os.remove(mName+".vmt")
         debug("[FVM] Material already exists!")
 
 def export_texture(texture, path, imageFormat=None): # Exports an image to VTF using VTFLib
@@ -266,17 +270,17 @@ for name in find_material_names(): # For every material in the input folder
         glossSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[3] + "." + config_input_format))
         metalSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[4] + "." + config_input_format))
     except FileNotFoundError:
-        debug("[FVM] [ERROR] Program terminated with exit code -1:\nCouldn't locate files with correct naming scheme, throwing FileNotFoundError!")
+        debug("[FVM] [ERROR] v"+version+" terminated with exit code -1:\nCouldn't locate files with correct naming scheme, throwing FileNotFoundError!")
         sys.exit()
 
-    debug("Color:\t\t" +colorSt)
+    print("Color:\t\t" +colorSt)
     if config_input_name_scheme[1] != '':
-        debug("Occlusion:\t" +aoSt)
+        print("Occlusion:\t" +aoSt)
     else:
-        debug("Occlusion:\t" +"None given, ignoring!")
-    debug("Metalness:\t" +metalSt)
-    debug("Normal:\t\t" +normalSt)
-    debug("Glossiness:\t" +glossSt + "\n")
+        print("Occlusion:\t" +"None given, ignoring!")
+    print("Metalness:\t" +metalSt)
+    print("Normal:\t\t" +normalSt)
+    print("Glossiness:\t" +glossSt + "\n")
     
     colorImage = Image.open(colorSt)
     if config_input_name_scheme[1] != '':
@@ -301,5 +305,9 @@ for name in find_material_names(): # For every material in the input folder
     do_normal(config_midtone, normalImage, glossImage)
     do_material(name)
     print("[FVM] Conversion for material '" + name + "' finished, files saved to '" + config_output_path + "'\n")
+    mat_count+=1
 
-debug("[FVM] Program terminated with exit code 0")
+debug("[FVM] v"+version+" terminated with exit code 0: All conversions finished.")
+if(config_print_config):
+    debug("Config file dump:")
+    debug(config)

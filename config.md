@@ -20,3 +20,5 @@ False
 rough
 # Print debug messages (False/True)
 True
+# Print config file (False/True)
+False
