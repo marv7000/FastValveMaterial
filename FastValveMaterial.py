@@ -54,7 +54,6 @@ config_export_images = eval(config[17])
 config_material_setup = config[19]
 config_debug_messages = eval(config[21])
 config_print_config = eval(config[23])
-mat_count = int(0)
 
 def debug(message):
     if config_debug_messages:
@@ -68,15 +67,16 @@ def check_for_valid_files(path, name, ending): # Check if a file in "path" start
 def find_material_names(): # Uses the color map to determine the current material name
     listStuff = []
     for file in os.listdir(config_path):
-        if file.endswith(config_input_mat_format + "." + config_input_format): # If file ends with "scheme.format"
+        if file.endswith(config_input_mat_format + "." + config_input_format): # If file ends with "scheme.format
             listStuff.append(file.replace(config_input_mat_format + "." + config_input_format, "")) # Get rid of "scheme.format" to get the material name and append it to the list of all materials
     return listStuff
 
 def do_diffuse(cIm, aoIm): # Generate Diffuse/Color map
-    if config_input_name_scheme[1] != '':
+    final_diffuse = cIm
+    final_diffuse = final_diffuse.convert('RGBA')
+    if aoIm != None:
+        aoIm.convert('RGBA')
         final_diffuse = ImageChops.multiply(cIm, aoIm) # Combine diffuse and occlusion map
-    else:
-        final_diffuse = cIm
     r,g,b,a = final_diffuse.split()     # Split diffuse image into channels to modify alpha
     a = a.convert('RGBA')               # Convert to RGBA so we can call Image.blend with metalImage
     a = Image.blend(a, metalImage.convert('RGBA'), 1)   # Blend the alpha channel with metalImage
@@ -98,7 +98,6 @@ def do_exponent(gIm): # Generate the exponent map
     layerImage = Image.new('RGBA', [finalExponent.size[0], finalExponent.size[1]], (0, 217, 0, 100))
     blackImage = Image.new('RGBA', [finalExponent.size[0], finalExponent.size[1]], (0, 0, 0, 100))
     finalExponent = Image.blend(finalExponent, layerImage, 0.5)
-
     g = g.convert('RGBA')
     b = b.convert('RGBA')
     g = Image.blend(g, layerImage, 1)
@@ -180,12 +179,9 @@ def do_gamma(x, y, im, mt): # Change the gamma of the given channels of "im" at 
     return (r,g,b,a)
 
 def fix_scale_mismatch(rgbIm, target): #Resize the target image to be the same as rgbIm (needed for normal maps)
-    if target.height != rgbIm.height:
-        factor = rgbIm.height / target.height
-        fixedMap = ImageOps.scale(target, factor)
-        return fixedMap
-    else:
-        return target
+    factor = rgbIm.height / target.height
+    fixedMap = ImageOps.scale(target, factor)
+    return fixedMap
 
 def do_material(mName): # Create a material with the given image names
     debug("[FVM] Creating material '"+ mName + "'")
@@ -285,6 +281,8 @@ for name in find_material_names(): # For every material in the input folder
     colorImage = Image.open(colorSt)
     if config_input_name_scheme[1] != '':
         aoImage = Image.open(aoSt)
+    else:
+        aoImage = Image.new('RGBA', (colorImage.width, colorImage.height), (255,255,255,255))
     metalImage = Image.open(metalSt)
     normalImage = Image.open(normalSt)
     glossImage = Image.open(glossSt)
@@ -292,10 +290,12 @@ for name in find_material_names(): # For every material in the input folder
     if config_material_setup == "rough": # I know this is simple as hell
         glossImage = convert_roughness_to_gloss(glossImage)
     if config_input_name_scheme[1] != '':
-        aoImage = fix_scale_mismatch(colorImage, aoImage)
-    metalImage = fix_scale_mismatch(colorImage, metalImage)
-    normalImage = fix_scale_mismatch(colorImage, normalImage)
-    glossImage = fix_scale_mismatch(colorImage, glossImage)
+        aoImage = fix_scale_mismatch(normalImage, aoImage)
+        
+    aoImage = fix_scale_mismatch(normalImage, aoImage)
+    metalImage = fix_scale_mismatch(normalImage, metalImage)
+    colorImage = fix_scale_mismatch(normalImage, colorImage)
+    glossImage = fix_scale_mismatch(normalImage, glossImage)
 
     if config_input_name_scheme[1] != '':
         do_diffuse(colorImage, aoImage)
@@ -305,7 +305,6 @@ for name in find_material_names(): # For every material in the input folder
     do_normal(config_midtone, normalImage, glossImage)
     do_material(name)
     print("[FVM] Conversion for material '" + name + "' finished, files saved to '" + config_output_path + "'\n")
-    mat_count+=1
 
 debug("[FVM] v"+version+" terminated with exit code 0: All conversions finished.")
 if(config_print_config):
