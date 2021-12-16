@@ -1,5 +1,5 @@
 # Input format ("png", "tga")
-tga
+png
 # Input naming scheme (The endings of the image names in order: color map, ao map, normal map, gloss/rough map, metal map - If the ao map parameter is left empty, the method won't be called)
 _rgb
 _ao
@@ -22,3 +22,5 @@ rough
 True
 # Print config file (False/True)
 False
+# Force image compression (Defaults to DXT5)
+True

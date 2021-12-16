@@ -54,6 +54,7 @@ config_export_images = eval(config[17])
 config_material_setup = config[19]
 config_debug_messages = eval(config[21])
 config_print_config = eval(config[23])
+config_force_compression = eval(config[25])
 
 def debug(message):
     if config_debug_messages:
@@ -107,7 +108,7 @@ def do_exponent(gIm): # Generate the exponent map
 
     colorSpc = (r,g,b,a)
     finalExponent = Image.merge('RGBA', colorSpc)
-    export_texture(finalExponent, (name+'_m.vtf'), 'DXT1')
+    export_texture(finalExponent, (name+'_m.vtf'), 'DXT1' if config_force_compression else 'DXT5')
     try:
         Path(config_output_path).mkdir(parents=True, exist_ok=True)
         shutil.move(name+'_m.vtf', config_output_path)
@@ -139,7 +140,7 @@ def do_normal(config_midtone, nIm, gIm):
 
     if config_export_images:
         finalNormal.save((name+'_n.tga'), 'TGA')
-    export_texture(finalNormal, (name+'_n.vtf'), 'RGBA8888') # Export normal map as *_n.vtf
+    export_texture(finalNormal, (name+'_n.vtf'), 'RGBA8888' if config_force_compression else 'DXT5') # Export normal map as *_n.vtf
     try:
         Path(config_output_path).mkdir(parents=True, exist_ok=True)
         shutil.move(name+'_n.vtf', config_output_path)
