@@ -14,6 +14,6 @@ Convert PBR materials to VMT and VMF files that imitate PBR properties in Source
     - Glossiness map (If you have a roughness map, set "Material Type" in config.md to "rough")
     - Optional: Ambient Occlusion map (If no image is given, the script defaults to a white image as the AO map)
 
-1. Drop all texture files into "images/", grouped as subfolders for each material (e.g. "images/testmat/")
-2. Adjust config.md
+1. Adjust config.md
+2. Drop all texture files into your input folder
 3. Run FastValveMaterial.py
