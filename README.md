@@ -1,3 +1,4 @@
+[![Releases](https://img.shields.io/github/downloads/marv7000/FastValveMaterial/total.svg)](https://github.com/marv7000/FastValveMaterial/releases) [![License](https://img.shields.io/github/license/marv7000/FastValveMaterial.svg)](https://github.com/marv7000/Tyrant/blob/master/LICENSE)
 # FastValveMaterial
 Convert PBR materials to VMT and VMF files that imitate PBR properties in Source engine games like Garry's Mod.
 # Dependencies:
