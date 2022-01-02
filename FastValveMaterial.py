@@ -39,7 +39,7 @@ from pathlib import Path
 import shutil
 
 vtf_lib = VTFLib.VTFLib()
-version = "1208"
+version = "1208,"
 print("FastValveMaterial (v"+version+")\n")
 
 f = open("config.md", 'r') # Read the config file (Actual line - 1)
@@ -55,6 +55,7 @@ config_material_setup = config[19]
 config_debug_messages = eval(config[21])
 config_print_config = eval(config[23])
 config_force_compression = eval(config[25])
+config_clear_exponent = eval(config[27])
 
 def debug(message):
     if config_debug_messages:
@@ -105,7 +106,8 @@ def do_exponent(gIm): # Generate the exponent map
     b = Image.blend(b, blackImage, 1)
     g = g.convert('L')
     b = b.convert('L')
-
+    if config_clear_exponent:
+        g = Image.new('L', [finalExponent.size[0], finalExponent.size[1]], 255)
     colorSpc = (r,g,b,a)
     finalExponent = Image.merge('RGBA', colorSpc)
     export_texture(finalExponent, (name+'_m.vtf'), 'DXT1' if config_force_compression else 'DXT5')
@@ -117,7 +119,7 @@ def do_exponent(gIm): # Generate the exponent map
         os.remove(name+"_m.vtf")
         debug("[FVM] Exponent already exists!")
 
-def convert_roughness_to_gloss(im): # Inverts a roughness map "mIm" to get a glossiness map
+def convert_roughness_to_gloss(im): # Inverts a roughness map "im" to get a glossiness map
     return ImageOps.invert(im.convert('RGB'))
 
 def do_normal(config_midtone, nIm, gIm):
@@ -126,7 +128,7 @@ def do_normal(config_midtone, nIm, gIm):
     row = finalGloss.size[0]
     col = finalGloss.size[1]
     for x in range(1 , row):
-        print("(", math.ceil(x/row*100),"%)", end="\r")
+        print("[FVM] Normal conversion: (", math.ceil(x/row*100),"%)", end="\r")
         for y in range(1, col):
             value = do_gamma(x,y,finalGloss, int(config_midtone))
             finalGloss.putpixel((x,y), value)

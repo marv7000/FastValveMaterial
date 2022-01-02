@@ -5,7 +5,7 @@ Convert PBR materials to VMT and VMF files that imitate PBR properties in Source
 - numpy
 # Setup:
 - If you're using the release version, you don't need to do anything else
-- On the other hand, when cloning the source, make sure to also pull and initialize VTFLibWrapper ("git submodules init" + "git submodules pull")
+- On the other hand, when cloning the source, make sure to also pull and initialize VTFLibWrapper ("git submodules init" + "git submodules update")
 
 - You will need the following textures:
     - Diffuse/Color map
@@ -17,3 +17,5 @@ Convert PBR materials to VMT and VMF files that imitate PBR properties in Source
 1. Adjust config.md
 2. Drop all texture files into your input folder
 3. Run FastValveMaterial.py
+# Notes and Troubleshooting:
+- Make sure your images are in RGBA8888 format. While the script can understand many different color formats, if you're getting errors, check if this is the case.
