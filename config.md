@@ -1,6 +1,6 @@
 # Input format ("png", "tga")
 png
-# Input naming scheme (The endings of the image names in order: color map, ao map, normal map, gloss/rough map, metal map - If the ao map parameter is left empty, the method won't be called)
+# Input naming scheme (The endings of the image names in order: color map, ao map, normal map, gloss/rough map, metal map - If the ao map parameter is left empty, it'll be ignored)
 _rgb
 _ao
 _n
@@ -25,4 +25,10 @@ False
 # Force image compression (Defaults to DXT5)
 True
 # Force empty green channel on exponent map (For example when using mesh-stacking, False/True)
+False
+# Metalness factor (0-255) - Makes material less or more metallic (Useful if your material looks too shiny)
+255
+# Use material proxies (Only works in Garry's Mod and requires https://steamcommunity.com/sharedfiles/filedetails/?id=2459720887) (False/True)
+False
+# Only convert Metallic-Roughness to Specular-Glossiness (False/True)
 False
