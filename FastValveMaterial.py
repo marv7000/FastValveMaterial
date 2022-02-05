@@ -76,11 +76,9 @@ def find_material_names(): # Uses the color map to determine the current materia
     return listStuff
 
 def do_diffuse(cIm, aoIm): # Generate Diffuse/Color map
-    final_diffuse = cIm
-    final_diffuse = final_diffuse.convert('RGBA')
+    final_diffuse = cIm.convert('RGBA')
     if aoIm != None:
-        aoIm.convert('RGBA')
-        final_diffuse = ImageChops.multiply(cIm, aoIm) # Combine diffuse and occlusion map
+        final_diffuse = ImageChops.multiply(final_diffuse.convert('RGBA'), aoIm.convert('RGBA')) # Combine diffuse and occlusion map
     r,g,b,a = final_diffuse.split()     # Split diffuse image into channels to modify alpha
     a = a.convert('RGBA')               # Convert to RGBA so we can call Image.blend with metalImage
     a = Image.blend(a, metalImage.convert('RGBA'), config_metallic_factor)   # Blend the alpha channel with metalImage
