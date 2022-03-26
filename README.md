@@ -4,6 +4,7 @@ Convert PBR materials to VMT and VMF files that imitate PBR properties in Source
 # Dependencies:
 - pillow (PIL)
 - numpy
+- VTFLibWrapper (https://github.com/Ganonmaster/VTFLibWrapper)
 # Setup:
 - If you're using the release version, you don't need to do anything else
 - On the other hand, when cloning the source, make sure to also pull and initialize VTFLibWrapper ("git submodules init" + "git submodules update")
@@ -20,3 +21,4 @@ Convert PBR materials to VMT and VMF files that imitate PBR properties in Source
 3. Run FastValveMaterial.py
 # Notes and Troubleshooting:
 - Make sure your images are in RGBA8888 format. While the script can understand many different color formats, if you're getting errors, check if this is the case.
+- The config file needs to stay stay 34 lines long, since FVM is just parsing the parameters from every line. For example, if you want to ignore an image, simply clear the line and do not delete it!

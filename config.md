@@ -1,6 +1,6 @@
 # Input format ("png", "tga")
 png
-# Input naming scheme (The endings of the image names in order: color map, ao map, normal map, gloss/rough map, metal map - If the ao map parameter is left empty, it'll be ignored)
+# Input naming scheme (The endings of the image names in order: color map, AO map, normal map, gloss/rough map, metal map - If any map parameter is left empty, it'll be ignored and replaced with an empty image)
 _rgb
 _ao
 _n
@@ -12,7 +12,7 @@ images/
 _n
 # Output path (Can also be multiple subfolders, e.g. folder1/folder2/output/ - This path will be referenced in the VMT file!)
 fastvalvematerial/
-# Gamma adjustment (0-255) - Only change this from 235 if you know what you're doing, other values might break the PBR effect!
+# Gamma adjustment (0-255) - Only change this from 235 if you know what you're doing, other values might break the PBR effect! Lower gamma values equal to less specular highlighting / more roughness
 235
 # Export converted images as tga as well (False/True)
 False
@@ -22,7 +22,7 @@ rough
 True
 # Print config file (False/True)
 False
-# Force image compression (Defaults to DXT5)
+# Force image compression (Defaults to DXT5, otherwise RGBA8888)
 True
 # Force empty green channel on exponent map (For example when using mesh-stacking, False/True)
 False
@@ -30,5 +30,5 @@ False
 255
 # Use material proxies (Only works in Garry's Mod and requires https://steamcommunity.com/sharedfiles/filedetails/?id=2459720887) (False/True)
 False
-# Only convert Metallic-Roughness to Specular-Glossiness (False/True)
+# ORM texture mode (e.g. for UE4)
 False
