@@ -39,7 +39,7 @@ from pathlib import Path
 import shutil
 
 vtf_lib = VTFLib.VTFLib()
-version = "0203"
+version = "0409"
 print("FastValveMaterial (v"+version+")\n")
 
 f = open("config.md", 'r') # Read the config file (Actual line - 1)
@@ -83,7 +83,7 @@ def do_diffuse(cIm, aoIm, mIm, gIm): # Generate Diffuse/Color map
     else:
         final_diffuse = ImageChops.blend(final_diffuse.convert("RGB"), ImageChops.multiply(final_diffuse.convert("RGB"), gIm.convert("RGB")), 0.3).convert("RGBA") # Combine diffuse and glossiness map
     r,g,b,a = final_diffuse.split() # Split diffuse image into channels to modify alpha
-        
+    # * I think i forgot to remove some excess conversion but i literally cannot be asked to do so
     a = Image.blend(cIm.convert("L"), mIm.convert("L"), config_metallic_factor) # Blend the alpha channel with metalImage
     a = a.convert("L") # Convert back to Linear
     color_spc = (r,g,b,a)
@@ -134,7 +134,6 @@ def do_normal(config_midtone, nIm, gIm):
         for y in range(1, col):
             value = do_gamma(x,y,finalGloss, int(config_midtone))
             finalGloss.putpixel((x,y), value)
-
     r,g,b,a = finalNormal.split()
     finalGloss = finalGloss.convert('L')
     a = Image.blend(a, finalGloss, 1)
@@ -169,7 +168,7 @@ def do_gamma(x, y, im, mt): # Change the gamma of the given channels of "im" at 
     gamma_correction = 1/gamma
     (r,g,b,a) = im.getpixel((x,y))
     if mt != 128:
-        r = 255 * ( pow( ( r / 255 ), gamma_correction ) )
+        r = 255 * ( pow( ( r / 255 ), gamma_correction ) ) # ! no clue what this does i copied it from stack overflow
         g = 255 * ( pow( ( g / 255 ), gamma_correction ) )
         b = 255 * ( pow( ( b / 255 ), gamma_correction ) )
     r = math.ceil(r)
@@ -177,7 +176,7 @@ def do_gamma(x, y, im, mt): # Change the gamma of the given channels of "im" at 
     b = math.ceil(b)
     return (r,g,b,a)
 
-def fix_scale_mismatch(rgbIm, target): #Resize the target image to be the same as rgbIm (needed for normal maps)
+def fix_scale_mismatch(rgbIm, target): # Resize the target image to be the same as rgbIm (needed for normal maps)
     factor = rgbIm.height / target.height
     fixedMap = ImageOps.scale(target, factor)
     return fixedMap
@@ -213,7 +212,7 @@ def do_material(mName): # Create a material with the given image names
         f.writelines(writer)
         f.close()
         shutil.move(mName+'.vmt', config_output_path)
-        debug("Material exported                  ") # Spaces are needed in order to overwrite the progress count, otherwise about 4 chars will stay on screen
+        debug("Material exported                  ") # ? Spaces are needed in order to overwrite the progress count, otherwise about 4 chars will stay on screen (?????)
     except Exception as e:
         debug("Material already exists, replacing!")
         shutil.copyfile(os.path.join(os.getcwd(), mName+".vmt"), os.path.join(os.getcwd(), config_output_path+mName+".vmt"), follow_symlinks=True)
@@ -298,14 +297,14 @@ for name in find_material_names(): # For every material in the input folder
             glossSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[3] + "." + config_input_format))
         else:
             colorSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[0] + "." + config_input_format))
-            if config_input_name_scheme[1] != '': # If the occlusion map is set
+            if config_input_name_scheme[1] != '': # If a map is set
                 aoSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[1] + "." + config_input_format))
             if config_input_name_scheme[2] != '':
                 normalSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[2] + "." + config_input_format))
             if config_input_name_scheme[3] != '':
-                metalSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[3] + "." + config_input_format))
+                glossSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[3] + "." + config_input_format))
             if config_input_name_scheme[4] != '':
-                glossSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[4] + "." + config_input_format))
+                metalSt = config_path + "/" + str(check_for_valid_files(config_path, name, config_input_name_scheme[4] + "." + config_input_format))
 
     except FileNotFoundError:
         debug("[ERROR] v"+version+" terminated with exit code -1:\nCouldn't locate files with correct naming scheme, throwing FileNotFoundError!")
@@ -344,7 +343,7 @@ for name in find_material_names(): # For every material in the input folder
         if config_input_name_scheme[2] != '':
             normalImage = Image.open(normalSt)
         else:
-            raise FileNotFoundError() # Couldn't find a normal map (required)
+            raise FileNotFoundError() # Couldn't find a normal map
 
         if config_input_name_scheme[3] != '':
             metalImage = Image.open(metalSt)
@@ -398,7 +397,7 @@ for name in find_material_names(): # For every material in the input folder
 
     print("[FVM] Conversion for material '" + name + "' finished, files saved to '" + config_output_path + "'\n")
 
-debug("v"+version+" terminated with exit code 0: All conversions finished.")
+debug("v"+version+" finished with exit code 0: All conversions finished.")
 if(config_print_config):
     debug("Config file dump:")
     debug(config)
