@@ -39,7 +39,7 @@ from pathlib import Path
 import shutil
 
 vtf_lib = VTFLib.VTFLib()
-version = "0409"
+version = "0418"
 print("FastValveMaterial (v"+version+")\n")
 
 f = open("config.md", 'r') # Read the config file (Actual line - 1)
@@ -383,7 +383,7 @@ for name in find_material_names(): # For every material in the input folder
         ormImage = Image.open(metalSt)
         (r,g,b) = ormImage.split()
         aoImage = r
-        glossImage = ImageOps.invert(glossImage.convert('RGB'))
+        glossImage = ImageOps.invert(g.convert('RGB'))
         metalImage = b
         normalImage = Image.open(normalSt)
         do_diffuse(colorImage, aoImage, metalImage, glossImage)
