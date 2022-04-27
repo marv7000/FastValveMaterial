@@ -32,3 +32,7 @@ False
 False
 # ORM texture mode (e.g. for UE4)
 False
+# $Color2 Value (Used to adjust parts such as: screws, metal, scratches, details, etc. Best case scenario is to start with 0.5 and work your way around it)
+0.5
+# $PhongBoost Value (The best range for this is usually 1-3.5, but don't be afraid to venture over/under this range for testing purposes)
+2.5
