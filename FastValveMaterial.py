@@ -60,6 +60,10 @@ config_metallic_factor = eval(config[29])/255*0.83 # ? Weird ass conversion to a
 config_material_proxies = eval(config[31])
 config_orm = eval(config[33])
 
+# ! New changes by TheZombieDon pog
+config_color2value = eval(config[35])
+config_phongboostvalue = eval(config[37])
+
 def debug(message):
     if config_debug_messages:
         print("[FVM]", message)
@@ -193,15 +197,15 @@ def do_material(mName): # Create a material with the given image names
     '\n\t"$basetexture" "' + config_output_path + mName + '_c"',
     '\n\t"$bumpmap" "' + config_output_path + mName + '_n"',
     '\n\t"$phongexponenttexture" "' + config_output_path + mName + '_m"',
-    '\n\t"$color2" "[ .4 .4 .4 ]"',
+    '\n\t"$color2"' + '"[ ' + config_color2value + ' ' + config_color2value + ' ' + config_color2value + ' ]"', # ! Have this be configurable within config file, returning a string "[ # # # ]"
     '\n\t"$blendtintbybasealpha" "1"',
     '\n\t"$phong" "1"',
-    '\n\t"$phongboost" "4"',
-    '\n\t"$phongalbedotint" "2"',
-    '\n\t"$PhongFresnelRanges" "[ 4 1 10 ]"',
+    '\n\t"$phongboost"' + '" ' + config_phongboostvalue + ' "', # ! Have this be configurable within config file, returing a string with a value within the quotes
+    '\n\t"$phongalbedotint" "2"', # ! ONE DAMMIT ONE
+    '\n\t"$PhongFresnelRanges" "[ 0.5 3 5 ]"', # ! Changed from "[ 4 1 10]" to "[ 0.5 3 5 ]"
     '\n\t"$envmap" "env_cubemap"',
-    '\n\t"$basemapalphaenvmapmask" "1"',
-    '\n\t"$envmapfresnel" "0.01"',
+    '\n\t"$basemapalphaenvmapmask" "1"', # ! I mean if this gets set to 0 and breaks something, keep it to 1
+    # ! '\n\t"$envmapfresnel" "0.01"', ------- Remove this, it defaults to the values used by $phongfresnelranges, so don't mess with it unless needed
     '\n\t"$envmaptint" "[ .01 .01 .01 ]"']
     proxies += '\n}'
     writer += proxies
