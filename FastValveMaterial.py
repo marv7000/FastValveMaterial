@@ -58,7 +58,6 @@ config_clear_exponent = eval(config[27])
 config_metallic_factor = eval(config[29])/255*0.83 # ? Weird ass conversion to account for the lambert factor
 config_material_proxies = eval(config[31])
 config_orm = eval(config[33])
-config_phongwarps = eval(config[35])
 
 def debug(message):
     if config_debug_messages:
