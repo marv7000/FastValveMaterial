@@ -38,7 +38,7 @@ from pathlib import Path
 import shutil
 
 vtf_lib = VTFLib.VTFLib()
-version = "221027"
+version = "221028"
 print("FastValveMaterial (v"+version+")\n")
 
 f = open("config.md", 'r') # Read the config file (Actual line - 1)
